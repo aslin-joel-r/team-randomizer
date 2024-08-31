@@ -1,5 +1,3 @@
-// script.js
-
 // Student list
 const students = ["Andrea", "Beenu", "Hannibal", "Aslin", "Adeno", "Riswin", "Sreejith", "Sherin", "Sija", "Jose", "Manoj", "Priya"];
 
@@ -69,11 +67,27 @@ document.addEventListener('DOMContentLoaded', function() {
             [selectedStudents[i], selectedStudents[j]] = [selectedStudents[j], selectedStudents[i]];
         }
 
-        // Split into teams
-        let teams = [];
-        for (let i = 0; i < selectedStudents.length; i += teamSize) {
-            teams.push(selectedStudents.slice(i, i + teamSize));
-        }
+        // Initialize teams array
+        let teams = Array(Math.ceil(selectedStudents.length / teamSize)).fill().map(() => []);
+        
+        // Distribute students to teams ensuring each team gets at least minTeamSize members
+        selectedStudents.forEach((student, index) => {
+            teams[index % teams.length].push(student);
+        });
+
+        // Distribute leftover students to ensure minimum team size
+        let minTeamSize = Math.floor(selectedStudents.length / teams.length);
+        let leftoverStudents = [];
+
+        teams.forEach(team => {
+            while (team.length > minTeamSize) {
+                leftoverStudents.push(team.pop());
+            }
+        });
+
+        leftoverStudents.forEach((student, index) => {
+            teams[index % teams.length].push(student);
+        });
 
         // Display teams
         teamResult.innerHTML = '';
