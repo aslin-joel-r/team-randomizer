@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Randomize single person
     document.getElementById('randomize-single').addEventListener('click', function() {
         const randomIndex = Math.floor(Math.random() * students.length);
-        singleResult.textContent = `Selected student: ${students[randomIndex]}`;
+        singleResult.textContent = `Selected Person is : ${students[randomIndex]}`;
     });
 
     // Randomize teams
@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const teamSize = parseInt(document.getElementById('team-size').value);
         
         if (selectedStudents.length === 0) {
-            teamResult.textContent = 'Please select at least one student.';
+            teamResult.textContent = 'Please select at least one Person.';
             return;
         }
 
