@@ -1,7 +1,7 @@
 // script.js
 
 // Student list
-const students = ["Alice", "Bob", "Charlie", "David", "Eve", "Frank", "Grace", "Heidi", "Ivan", "Judy", "Mallory", "Oscar"];
+const students = ["Andrea", "Beenu", "Hannibal", "Aslin", "Adeno", "Riswin", "Sreejith", "Sherin", "Sija", "Jose", "Manoj", "Priya"];
 
 document.addEventListener('DOMContentLoaded', function() {
     const modeRadios = document.querySelectorAll('input[name="mode"]');
