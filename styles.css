@@ -6,7 +6,7 @@ body {
     padding: 0;
     display: flex;
     justify-content: center;
-    align-items: flex-start; /* Align to the top of the page */
+    align-items: flex-start;
     min-height: 100vh;
     flex-direction: column;
 }
@@ -17,9 +17,9 @@ body {
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     width: 100%;
-    max-width: 400px; /* Set a maximum width for larger screens */
-    margin: 20px auto; /* Center the container and add vertical space */
-    box-sizing: border-box; /* Include padding in the width calculation */
+    max-width: 400px;
+    margin: 20px auto;
+    box-sizing: border-box;
 }
 
 h1 {
@@ -51,18 +51,41 @@ button:hover {
 
 p, label {
     margin-top: 10px;
+    font-weight: bold;
+}
+
+#team-mode label {
+    display: block;
+    margin-bottom: 5px;
 }
 
 #students-list {
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
 }
 
 #students-list label {
-    margin: 5px 0;
+    background-color: #f0f0f0;
+    padding: 10px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    width: calc(50% - 10px); /* 2 columns */
+    box-sizing: border-box;
 }
 
-/* Responsive adjustments */
+#students-list label:hover {
+    background-color: #e0e0e0;
+}
+
+#students-list input[type="checkbox"] {
+    margin-right: 10px;
+}
+
 @media (max-width: 600px) {
     .container {
         padding: 15px;
@@ -81,6 +104,10 @@ p, label {
     #team-mode label,
     #students-list label {
         font-size: 0.9em;
+    }
+
+    #students-list label {
+        width: 100%; /* Full width on small screens */
     }
 }
 
