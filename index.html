@@ -3,41 +3,159 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Randomizer</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>IPU Consumption Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 500px;
+            margin: auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        select, input[type="number"] {
+            margin-top: 5px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #e9ecef;
+            border-radius: 4px;
+            text-align: center;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <h1>Random Team Generator</h1>
-        <form id="randomizer-form">
-            <div>
-                <label><input type="radio" name="mode" value="single" checked> Single</label>
-                <label><input type="radio" name="mode" value="team"> Team</label>
-            </div>
-            
-            <!-- Single mode -->
-            <div id="single-mode">
-                <button type="button" id="randomize-single">Randomize Single</button>
-                <p id="single-result"></p>
-            </div>
-            
-            <!-- Team mode -->
-            <div id="team-mode" style="display: none;">
-                <div>
-                    <label><input type="checkbox" id="select-all"> Select All</label>
-                </div>
-                <div id="students-list">
-                    <!-- Students will be dynamically listed here -->
-                </div>
-                <div>
-                    <label for="team-size">Team Size:</label>
-                    <input type="number" id="team-size" min="1" max="12" value="3">
-                </div>
-                <button type="button" id="randomize-team">Randomize Teams</button>
-                <div id="team-result"></div>
-            </div>
+        <h1>IPU Consumption Calculator</h1>
+        <form id="ipuForm">
+            <label for="service">Service:</label>
+            <select id="service" name="service" required>
+                <option value="">Select a service</option>
+            </select>
+
+            <label for="compute_units">Compute Units:</label>
+            <input type="number" id="compute_units" name="compute_units" required min="1">
+
+            <label for="hours">Hours:</label>
+            <input type="number" id="hours" name="hours" required min="1">
+
+            <button type="submit">Calculate</button>
         </form>
+        <div id="result"></div>
     </div>
-    <script src="script.js"></script>
+
+    <script>
+        const ipuPerMetricUnit = {
+            "Advanced Data Integration": 0.19,
+            "Advanced Data Integration with Advanced Serverless": 0.32,
+            "Advanced Data Quality": 0.45,
+            "Advanced Data Quality with Advanced Serverless": 0.77,
+            "API Center": 13.33,
+            "API Management": 13.33,
+            "Application Ingestion and Replication": 0.1,
+            "Application Ingestion and Replication - Change Data Capture": 6.0,
+            "Application Integration": 1.38,
+            "Application Integration with Advanced Serverless": 2.38,
+            "B2B Gateway": 0.28,
+            "CLAIRE GPT": 50.0,
+            "Customer Managed Key": 2.0,
+            "Data Governance and Catalog - Catalog": 0.83,
+            "Data Governance and Catalog - Governance": 0.95,
+            "Data Governance and Catalog - Metadata Record Consumption": 0.32,
+            "Data Governance and Catalog - Scanner": 0.32,
+            "Data Governance and Catalog - Scanner with Advanced Serverless": 0.56,
+            "Data Integration": 0.16,
+            "Data Integration with Advanced Serverless": 0.28,
+            "Data Integration - Change Data Capture": 4.88,
+            "Data Marketplace": 0.416,
+            "Data Masking": 0.37,
+            "Data Quality": 0.38,
+            "Data Quality with Advanced Serverless": 0.65,
+            "Data Validation": 0.16,
+            "Database Ingestion and Replication": 0.1,
+            "Database Ingestion and Replication - Change Data Capture": 6.5,
+            "File Ingestion and Replication": 0.03,
+            "INFACore": 0.15,
+            "Industry Solutions": 0.28,
+            "Integration Hub": 6.0,
+            "Model Serve": 0.075,
+            "SQL ELT": 0.048,
+            "Secrets Manager Configuration Service": 0.016,
+            "Streaming Ingestion and Replication": 0.27,
+            "Pre-Release": 6.0,
+            "Sandbox": 6.0,
+            "Sub-Org": 6.0,
+            "Additional Production Org": 6.0,
+        };
+
+        // Populate the service dropdown
+        const serviceSelect = document.getElementById('service');
+        for (const service in ipuPerMetricUnit) {
+            const option = document.createElement('option');
+            option.value = service;
+            option.textContent = service;
+            serviceSelect.appendChild(option);
+        }
+
+        function calculateIpuConsumption(serviceType, scalerValue) {
+            if (!(serviceType in ipuPerMetricUnit)) {
+                return "Invalid service type";
+            }
+            return scalerValue * ipuPerMetricUnit[serviceType];
+        }
+
+        document.getElementById('ipuForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const service = document.getElementById('service').value;
+            const computeUnits = parseFloat(document.getElementById('compute_units').value);
+            const hours = parseFloat(document.getElementById('hours').value);
+
+            const totalIpuConsumption = calculateIpuConsumption(service, computeUnits * hours);
+            
+            if (typeof totalIpuConsumption === 'number') {
+                document.getElementById('result').textContent = `Total IPU consumption: ${totalIpuConsumption.toFixed(2)}`;
+            } else {
+                document.getElementById('result').textContent = totalIpuConsumption; // Error message
+            }
+        });
+    </script>
 </body>
 </html>
